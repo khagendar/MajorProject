@@ -22,6 +22,8 @@ import DeleteAccount from "./HomePage/DeleteAccount";
 import MBTITest from "./RegisterForms/MBTItest";
 import ForgotPassword from "./Login/Forgotpassword";
 import GenerateChatApp from "./chatApplication/GenerateChatApp";
+import Payment from "./Payment/payment";
+import ProfileSearch from "./HomePage/ProfileSearchMatches"
 
 function AppContent() {
   return (
@@ -51,6 +53,8 @@ function AppContent() {
           <Route path='/settings' element={<Settings/>}/>
           <Route path='/mbtiTest' element={<MBTITest/>}/>
           <Route path='/chat' element={<GenerateChatApp />} />
+          <Route path='/payment' element={<Payment />} />
+          <Route path='/Search/Matches' element={<ProfileSearch/>} />
           {/* <Route path='/deleteAccount' element={<DeleteAccount/>}/> */}
           {/* Add Protected Routes Here */}
         </Routes>
