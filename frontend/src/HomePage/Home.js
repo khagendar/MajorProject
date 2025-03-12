@@ -90,7 +90,9 @@ const MatrimonyDashboard = () => {
       navigate('/Matches');
     }
   }, [showAll, navigate]);
-
+const handleUpgrade=()=>{
+  navigate('/payment');
+}
   const displayedMatches = matches.slice(0, 6);
    console.log(displayedMatches);
   return (
@@ -117,7 +119,7 @@ const MatrimonyDashboard = () => {
               <Typography variant="body2" sx={{ mt: 1 }}>
                 Membership: <b>Free</b>
               </Typography>
-              <Button variant="contained" sx={{ mt: 1, bgcolor: "#ff9800" }}>
+              <Button variant="contained" sx={{ mt: 1, bgcolor: "#ff9800" }} onClick={handleUpgrade}>
                 Upgrade
               </Button>
               <List sx={{ mt: 2 }}>

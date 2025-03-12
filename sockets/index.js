@@ -190,6 +190,21 @@ io.emit("postDeleted",selectedPostId);
  socket.on("deleteAccount",((userId)=>{
     io.emit("AccountDeleted",userId);
  }))
+
+ socket.on("sendRequest", ({ receiverId }) => { // Destructure receiverId properly
+    // console.log("Received request for:", receiverId);
+    // console.log("Current Users List:", users);
+
+    const receiver = getUser(receiverId); // Check if receiver exists in memory
+    // console.log("Receiver found:", receiver);
+
+    if (receiver) {
+        io.to(receiver.socketId).emit("NotificationReceived", receiverId);
+    } else {
+        console.error("Receiver not found!");
+    }
+});
+
     // Handle the disconnect event when it happens
     socket.on("disconnect", () => {
         console.log("A user disconnected:", socket.id);

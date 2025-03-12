@@ -23,6 +23,7 @@ const MatrimonialProfiles = () => {
   const [shortlisted, setShortlisted] = useState([]);
   const navigate = useNavigate();
   const auth = useAuth();
+  const [userData, setUserData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +40,7 @@ const MatrimonialProfiles = () => {
         setMatches(matchesResponse?.data?.data || []);
 
         const shortlistResponse = await axios.get(
-          `http://localhost:5000/shortlist/${auth.user.id}`
+          `http://localhost:5000/shortlist/${auth?.user?.id}`
         );
 
       //  console.log(shortlistResponse.data);
@@ -56,6 +57,26 @@ const MatrimonialProfiles = () => {
 
     fetchData();
   }, [auth?.user?.id]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userDetails = {};
+      for (const profile of matches) {
+        if (!profile?.userId) continue;
+        try {
+          const res = await axios.get(`http://localhost:5000/user/${profile?.userId}`);
+          userDetails[profile.userId] = res.data;
+          // console.log(res.data);
+        } catch (error) {
+          console.error(`Error fetching user data for ${profile?.userId}:`, error);
+        }
+      }
+      setUserData(userDetails);
+    
+    };
+
+    fetchUserData();
+  }, [matches]);
 
   const toggleShortlist = async (profileId) => {
     try {
@@ -86,7 +107,8 @@ const MatrimonialProfiles = () => {
   const totalPages = Math.ceil(matches.length / profilesPerPage);
 
   const handleViewProfile = (profile) => {
-    navigate(`/profile/${profile._id}`, { state: { profile } });
+    const userId = userData[profile?.userId]?._id;
+    navigate(`/profile/${userId}`, { state: { profile } });
   };
 
   return (
@@ -97,7 +119,7 @@ const MatrimonialProfiles = () => {
           {selectedProfiles.map((profile) => (
             <Grid item sm={4} lg={3} key={profile._id}>
               <Box sx={{ maxWidth: 200, minHeight: 200, boxShadow: 3, borderRadius: 2, textAlign: "center", position: "relative", bgcolor: "white", p: 2 }}>
-                <Box component="img" src={profile.image} alt={profile.name} sx={{ width: "80%", height: 150, borderRadius: 2 }} />
+                <Box component="img" src={profile?.image} alt={profile?.name} sx={{ width: "80%", height: 150, borderRadius: 2 }} />
                 
                 <IconButton
                   sx={{ position: "absolute", top: 10, right: 10, backgroundColor: "white" }}
@@ -111,7 +133,7 @@ const MatrimonialProfiles = () => {
                 </IconButton>
 
                 <Typography variant="subtitle2" color="textSecondary">
-                  Matrimonial ID: {profile.id}
+                  Matrimonial ID: {userData[profile?.userId]?.accId || "N/A"}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>
                   {profile.name}

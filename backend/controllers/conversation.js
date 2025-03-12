@@ -65,9 +65,9 @@ async ConversationDetails(req, res) {
       members: { $all: [senderId, receiverId] },
     });
 
-    // if (!conversation) {
-    //   return res.status(404).json({ message: "Conversation not found" });
-    // }
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
 
     // Return the conversation details
     res.status(200).json(conversation);

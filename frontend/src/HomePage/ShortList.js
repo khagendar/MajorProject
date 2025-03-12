@@ -12,6 +12,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Navbar from "./Navbar";
 import { useAuth } from "../routes/AuthContex";
+import { useNavigate } from "react-router-dom";
 const profilesPerPage = 4;
 
 
@@ -19,7 +20,9 @@ const MatrimonialProfiles = () => {
   const [page, setPage] = useState(1);
   const [shortlistedProfiles, setShortlistedProfiles] = useState([]);
   const auth=useAuth();
- 
+  const [userData, setUserData] = useState({});
+ const navigate=useNavigate();
+
   useEffect(() => {
     fetchShortlistedProfiles();
   }, []);
@@ -47,10 +50,42 @@ const MatrimonialProfiles = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userDetails = {}; // Initialize an empty object
+  
+      for (const profile of shortlistedProfiles) {
+        console.log(profile);
+        if (!profile?.profileId?.userId) continue;
+  
+        try {
+          const res = await axios.get(`http://localhost:5000/user/${profile?.profileId?.userId}`);
+          // console.log(res.data);
+          userDetails[profile?.profileId?.userId] = res.data;
+        } catch (error) {
+          console.error(`Error fetching user data for ${profile?.userId}:`, error);
+        }
+      }
+  
+      // console.log("Final userDetails:", userDetails); // Print final userDetails after loop completes
+      setUserData(userDetails);
+    };
+  
+    if (shortlistedProfiles.length > 0) {
+      fetchUserData();
+    }
+  }, [shortlistedProfiles]);
+  
+
   const startIndex = (page - 1) * profilesPerPage;
   const selectedProfiles = shortlistedProfiles.slice(startIndex, startIndex + profilesPerPage);
   const totalPages = Math.ceil(shortlistedProfiles.length / profilesPerPage);
 
+  const handleViewProfile = (profile) => {
+    // console.log(profile);
+    // const userId = userData[profile?.userId]?._id;
+    navigate(`/profile/${profile?.profileId?.userId}`, { state: { profile } });
+  };
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />
@@ -68,7 +103,7 @@ const MatrimonialProfiles = () => {
                   <FavoriteIcon sx={{ color: "red" }} />
                 </IconButton>
 
-                <Typography variant="subtitle2" color="textSecondary">Matrimonial ID: </Typography>
+                <Typography variant="subtitle2" color="textSecondary">Matrimonial ID: {userData[profile?.profileId?.userId]?.accId || "N/A"}</Typography>
                 <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>{profile.profileId.name}</Typography>
                 <Typography variant="body2" color="textSecondary">{profile.profileId.age} yrs • {profile.profileId.familyDetails.height.feet}ft {profile.profileId.familyDetails.height.feet}inch</Typography>
                 <Typography variant="body2" color="textSecondary">{profile.profileId.gender}: {profile.profileId.languages}</Typography>
@@ -76,8 +111,14 @@ const MatrimonialProfiles = () => {
                   <LocationOnIcon color="error" fontSize="small" />
                   <Typography variant="body2" color="textSecondary">{profile.profileId.professionalDetails.state ||"Unknow"}</Typography>
                 </Box>
-                <Button variant="contained" sx={{ mt: 2, background: "linear-gradient(45deg, #FF4081, #FF9800)" }}>View Profile</Button>
-              </Box>
+              <Button
+                  variant="contained"
+                  sx={{ mt: 2, background: "linear-gradient(45deg, #FF4081, #FF9800)" }}
+                  onClick={() => handleViewProfile(profile)}
+                >
+                  View Profile
+                </Button>
+             </Box>
             </Grid>
           ))}
         </Grid>
