@@ -82,7 +82,7 @@ const MBTITest = () => {
         },
       });
 
-      navigate('/Home');
+      navigate('/preference');
       
     } catch (error) {
       console.error("Error updating MBTI data:", error);

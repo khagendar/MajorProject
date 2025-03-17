@@ -28,6 +28,7 @@ import socket from "../socket";
 const ProfileCard = () => {
   const { userId } = useParams(); 
   const [useDetails,setUseDetails]=useState('');
+  const [keys,setKeys]=useState([]);
   const auth=useAuth();
   console.log(userId);
   useEffect(() => {
@@ -38,6 +39,8 @@ const ProfileCard = () => {
   
         if (response.data) {
           setUseDetails(response.data);
+          setKeys(Object.keys(response.data.data))
+          console.log(response.data.data)
         } else {
           console.error("Data is empty");
         }
@@ -86,8 +89,9 @@ const ProfileCard = () => {
       console.error("Error sending interest:", error);
     }
   };
-
-  
+  useEffect(()=>{
+    console.log("keys",keys)
+  },[keys])
   
   console.log(useDetails);
   return (
@@ -130,18 +134,28 @@ const ProfileCard = () => {
         </Card>
 
         {/* Interest Section */}
-        <Box sx={{ textAlign: "center", mt: 2 }}>
-          {/* <Button variant="outlined" color="secondary">
-            Don't Show
-          </Button> */}
+        {/* <Box sx={{  mt: 2 }}>
+          
+        </Box> */}
+
+        {/* Shortlist and Favorites */}
+        <Box sx={{  mt: 2, display: "flex", justifyContent: "space-between" }}>
+
+        <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
+            Like
+          </Button>
           <Button
-            variant="contained"
-            color="primary"
-            sx={{ ml: 2 }}
-            endIcon={<SendIcon />}
-            onClick={handleSendInterest}
-          >
-            Send Interest
+              variant="contained"
+              color="primary"
+              sx={{ ml: 2 }}
+              endIcon={<SendIcon />}
+              onClick={handleSendInterest}
+            >
+              Send Interest
+          </Button>
+          
+          <Button variant="contained" color="primary">
+            View Similar Profiles
           </Button>
         </Box>
 
@@ -163,7 +177,7 @@ const ProfileCard = () => {
             </Grid>
             <Grid item xs={6}>
               <Typography>
-                <PersonIcon fontSize="small" /> Marital Status: {useDetails?.data?.familyDetails?.martialStatus}
+                <PersonIcon fontSize="small" /> Marital Status: {useDetails?.data?.familyDetails?.maritalStatus}
               </Typography>
               <Typography>
                 <PersonIcon fontSize="small" /> Lives in:{useDetails?.data?.professionalDetails.workLocation} , {useDetails?.data?.professionalDetails.state}
@@ -175,15 +189,7 @@ const ProfileCard = () => {
           </Grid>
         </Box>
 
-        {/* Shortlist and Favorites */}
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
-          <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
-            Like
-          </Button>
-          <Button variant="contained" color="primary">
-            View Similar Profiles
-          </Button>
-        </Box>
+        
       </Box>
     </Box>
   );

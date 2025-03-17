@@ -37,7 +37,7 @@ const MatrimonialProfiles = () => {
           `http://localhost:5000/matches/${auth.user.id}`
         );
 
-        setMatches(matchesResponse?.data?.data || []);
+        setMatches(matchesResponse?.data?.matches || []);
 
         const shortlistResponse = await axios.get(
           `http://localhost:5000/shortlist/${auth?.user?.id}`

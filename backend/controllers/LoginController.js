@@ -5,6 +5,7 @@ const User = require("../Model/loginschema");
 const OTP=require("../Model/otpschema")
 const router = express.Router();
 const nodemailer = require("nodemailer");
+const Form=require('../Model/Form')
 
 class UserController {
     constructor() {
@@ -114,6 +115,9 @@ class UserController {
                 return res.status(401).json({ error: "Invalid credentials" });
             }
 
+            const form=await Form.findOne({userId:user._id})
+            const gender=form.gender?form.gender:"";
+
             // Generate JWT Token
             const tokenPayload = {
                 userId: user._id,
@@ -132,7 +136,8 @@ class UserController {
                 user: {
                     id: user._id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    gender: gender,
                 },
                 token
             });

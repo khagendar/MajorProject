@@ -62,9 +62,12 @@ const MatrimonyDashboard = () => {
     }, []);
     const fetchMatches = async () => {
       try {
+        console.log("fetching");
         const response = await axios.get(`http://localhost:5000/matches/${auth?.user?.id}`);
-        console.log(response.data);
-        setMatches(response?.data?.data || []);
+        console.log("fetched");
+        console.log(response.data.matches);
+        // console.log(response.data);
+        setMatches(response?.data?.matches || []);
       
       } catch (error) {
         console.error("Error fetching matches:", error);
@@ -94,7 +97,7 @@ const handleUpgrade=()=>{
   navigate('/payment');
 }
   const displayedMatches = matches.slice(0, 6);
-   console.log(displayedMatches);
+   console.log("displayedmatches",displayedMatches);
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />

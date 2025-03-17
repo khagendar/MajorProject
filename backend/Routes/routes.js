@@ -11,6 +11,8 @@ const MatchesController=require('../controllers/MatchesController');
 const ShortListController=require('../controllers/shortlistController');
 const NotificationController =require('../controllers/Notification');
 const SearchController=require('../controllers/SearchController');
+const preferenceCont = require('../controllers/preferencecont');
+
 const multer=require('multer');
 const storage = multer.memoryStorage(); // Store image in memory as a Buffer
 const upload = multer({ storage: storage });
@@ -60,4 +62,8 @@ router.get("/notificationUser/:userId",NotificationController.UserNotifications)
 //Search
 router.get("/search/:accId",SearchController.SearchById);
 router.get("/searchmatches",SearchController.SearchProfiles);
+
+//preference
+router.post("/setPreference",preferenceCont.setPreference)
+
 module.exports = router;

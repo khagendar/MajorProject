@@ -24,6 +24,7 @@ import ForgotPassword from "./Login/Forgotpassword";
 import GenerateChatApp from "./chatApplication/GenerateChatApp";
 import Payment from "./Payment/payment";
 import ProfileSearch from "./HomePage/ProfileSearchMatches"
+import PreferencePre from "./RegisterForms/Preference_pre";
 
 function AppContent() {
   return (
@@ -55,6 +56,7 @@ function AppContent() {
           <Route path='/chat' element={<GenerateChatApp />} />
           <Route path='/payment' element={<Payment />} />
           <Route path='/Search/Matches' element={<ProfileSearch/>} />
+          <Route path='/preference' element={<PreferencePre/>}/>
           {/* <Route path='/deleteAccount' element={<DeleteAccount/>}/> */}
           {/* Add Protected Routes Here */}
         </Routes>
