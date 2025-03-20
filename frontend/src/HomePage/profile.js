@@ -1,4 +1,4 @@
-import {React,useEffect} from "react";
+import { React, useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -20,81 +20,146 @@ import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../routes/AuthContex";
 import axios from "axios";
-import { useState } from "react";
-
-import { io } from "socket.io-client";
-
 import socket from "../socket";
+
 const ProfileCard = () => {
   const { userId } = useParams(); 
-  const [useDetails,setUseDetails]=useState('');
-  const auth=useAuth();
-  console.log(userId);
+  const [useDetails, setUseDetails] = useState("");
+  const [requestStatus, setRequestStatus] = useState(null);
+  const [ConnectedUsers, setConnectedUsers] = useState([]);
+  const auth = useAuth();
+
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/get-form/${userId}`);
-        console.log("API Response:", response); // Check the response
-  
         if (response.data) {
           setUseDetails(response.data);
-        } else {
-          console.error("Data is empty");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-  
+
+    const fetchConnectionData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/connections/${auth?.user?.id}`);
+        console.log(response?.data?.connectedUsers);
+        
+        setConnectedUsers(response?.data?.connectedUsers || []);
+      } catch (error) {
+        console.error("Error fetching connection data:", error);
+      }
+    };
+
+    const checkRequestStatus = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/requests/${auth?.user?.id}/pending`);
+        console.log(response.data);
+
+        const { sentRequests, receivedRequests } = response.data;
+
+        const existingSentRequest = sentRequests.find(req => req.receiver._id === userId);
+        const existingReceivedRequest = receivedRequests.find(req => req.sender._id === userId);
+
+        if (existingSentRequest) {
+          setRequestStatus("pending-sent");
+        } else if (existingReceivedRequest) {
+          setRequestStatus("pending-received");
+        } else {
+          setRequestStatus("none");
+        }
+      } catch (error) {
+        console.error("Error checking request status:", error);
+      }
+    };
+
     if (userId) {
       fetchUserData();
-    } else {
-      console.error("userId is undefined");
+      checkRequestStatus();
+      fetchConnectionData();
     }
-  }, [userId]);
+  }, [userId, auth?.user?.id]);
 
-  useEffect(() => {
-    if (auth?.user?.id) {
-      // Emit addUser event when the user connects
-      socket.emit("addUser", auth.user.id);
-      
-      // Cleanup: Remove user when disconnecting
-      return () => {
-        socket.emit("removeUser", auth.user.id);
-      };
-    }
-  }, [auth?.user?.id]);
-  
-
-  const handleSendInterest = async () => {
+  const fetchConnectionData = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/send-interest", {
-        senderId: auth?.user?.id, 
-        receiverId: userId,
-        senderName:auth?.user?.name
-      });
-      console.log(response);
+      const response = await axios.get(`http://localhost:5000/connections/${auth?.user?.id}`);
+      console.log(response?.data);
       
-    
-  
-      if (response.status === 201) {
-        socket.emit("sendRequest", {
-          receiverId: userId,
-        });
+      setConnectedUsers(response?.data?.connectedUsers || []);
+    } catch (error) {
+      console.error("Error fetching connection data:", error);
+    }
+  };
+  const checkRequestStatus = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/requests/${auth?.user?.id}/pending`);
+      console.log(response.data);
+
+      const { sentRequests, receivedRequests } = response.data;
+
+      const existingSentRequest = sentRequests.find(req => req.receiver._id === userId);
+      const existingReceivedRequest = receivedRequests.find(req => req.sender._id === userId);
+
+      if (existingSentRequest) {
+        setRequestStatus("pending-sent");
+      } else if (existingReceivedRequest) {
+        setRequestStatus("pending-received");
+      } else {
+        setRequestStatus("none");
       }
     } catch (error) {
-      console.error("Error sending interest:", error);
+      console.error("Error checking request status:", error);
+    }
+  };
+  const handleSendInterest = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/requestSend", {
+        sender: auth?.user?.id, 
+        receiver: userId,
+        senderName: auth?.user?.name,
+      });
+
+      setRequestStatus("pending");
+      
+      socket.emit("sendRequest", { receiverId: userId });
+      fetchConnectionData();
+      checkRequestStatus();
+      console.log("Request Sent Successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending interest:", error.response?.data || error.message);
     }
   };
 
+  const handleCancelRequest = async () => {
+    try {
+      if (!auth?.user?.id || !userId) {
+        console.error("Missing sender or receiver ID");
+        return;
+      }
+  
+      await axios.delete("http://localhost:5000/connections/remove", {
+        data: { 
+          sender: auth.user.id, 
+          receiver: userId 
+        }
+      });
+  
+      console.log(auth.user.id, userId);
+      setRequestStatus("none");
+      console.log("Request Canceled");
+    } catch (error) {
+      console.error("Error canceling request:", error.response?.data || error.message);
+    }
+  };
   
   
-  console.log(useDetails);
+
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />
       <Box sx={{ maxWidth: 800, margin: "auto", p: 2 }}>
-        {/* Profile Card */}
         <Card sx={{ display: "flex", p: 2, alignItems: "center" }}>
           <CardMedia
             component="img"
@@ -105,19 +170,21 @@ const ProfileCard = () => {
           <CardContent sx={{ flex: 1, ml: 2 }}>
             <Typography variant="h6">{useDetails?.data?.name}</Typography>
             <Typography variant="body2" color="textSecondary">
-              {useDetails?.data?.age} Yrs, {useDetails?.data?.familyDetails?.height?.feet}'{useDetails?.data?.familyDetails?.height?.inches}"
+              {useDetails?.data?.age} Yrs, {useDetails?.data?.familyDetails?.height?.feet}'
+              {useDetails?.data?.familyDetails?.height?.inches}"
             </Typography>
             <Typography variant="body2" color="textSecondary">
-            {useDetails?.data?.caste}
+              {useDetails?.data?.caste}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-            {useDetails?.data?.professionalDetails.highestEducation}, {useDetails?.data?.professionalDetails.occupation}
+              {useDetails?.data?.professionalDetails.highestEducation},{" "}
+              {useDetails?.data?.professionalDetails.occupation}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-            {useDetails?.data?.professionalDetails.workLocation}, {useDetails?.data?.professionalDetails.state}
+              {useDetails?.data?.professionalDetails.workLocation},{" "}
+              {useDetails?.data?.professionalDetails.state}
             </Typography>
 
-            {/* Icons */}
             <Box sx={{ mt: 2 }}>
               <IconButton color="primary">
                 <CallIcon />
@@ -131,18 +198,27 @@ const ProfileCard = () => {
 
         {/* Interest Section */}
         <Box sx={{ textAlign: "center", mt: 2 }}>
-          {/* <Button variant="outlined" color="secondary">
-            Don't Show
-          </Button> */}
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ ml: 2 }}
-            endIcon={<SendIcon />}
-            onClick={handleSendInterest}
-          >
-            Send Interest
-          </Button>
+        {ConnectedUsers.some(user => user._id === userId) ? (
+            <Typography variant="h6" color="green">
+              You are Connected with this profile.
+            </Typography>
+          ) : requestStatus === "pending-sent" ? (
+            <Button variant="outlined" color="secondary" onClick={handleCancelRequest}>
+              Cancel Request
+            </Button>
+          ) : requestStatus === "pending-received" ? (
+            <Button variant="contained" disabled>
+              Request is Sent to You
+            </Button>
+          ) : requestStatus === "accepted" ? (
+            <Button variant="contained" disabled>
+              Connected
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" endIcon={<SendIcon />} onClick={handleSendInterest}>
+              Send Interest
+            </Button>
+          )}
         </Box>
 
         {/* Basic Details */}
@@ -152,13 +228,14 @@ const ProfileCard = () => {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Typography>
-                <PersonIcon fontSize="small" /> Age:  {useDetails?.data?.age} Years
+                <PersonIcon fontSize="small" /> Age: {useDetails?.data?.age} Years
               </Typography>
               <Typography>
-                <PersonIcon fontSize="small" /> Height: {useDetails?.data?.familyDetails?.height?.feet}'{useDetails?.data?.familyDetails?.height?.inches}" | Normal
+                <PersonIcon fontSize="small" /> Height: {useDetails?.data?.familyDetails?.height?.feet} '
+                {useDetails?.data?.familyDetails?.height?.inches}" | Normal
               </Typography>
               <Typography>
-                <PersonIcon fontSize="small" /> Language: {useDetails?.data?.motherTongue}  (Mother Tongue)
+                <PersonIcon fontSize="small" /> Language: {useDetails?.data?.motherTongue} (Mother Tongue)
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -166,23 +243,14 @@ const ProfileCard = () => {
                 <PersonIcon fontSize="small" /> Marital Status: {useDetails?.data?.familyDetails?.martialStatus}
               </Typography>
               <Typography>
-                <PersonIcon fontSize="small" /> Lives in:{useDetails?.data?.professionalDetails.workLocation} , {useDetails?.data?.professionalDetails.state}
+                <PersonIcon fontSize="small" /> Lives in: {useDetails?.data?.professionalDetails.workLocation},{" "}
+                {useDetails?.data?.professionalDetails.state}
               </Typography>
               <Typography>
                 <PersonIcon fontSize="small" /> Citizenship: {useDetails?.data?.professionalDetails.country}
               </Typography>
             </Grid>
           </Grid>
-        </Box>
-
-        {/* Shortlist and Favorites */}
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
-          <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
-            Like
-          </Button>
-          <Button variant="contained" color="primary">
-            View Similar Profiles
-          </Button>
         </Box>
       </Box>
     </Box>

@@ -6,8 +6,6 @@ import { useAuth } from "../routes/AuthContex";
 
 const FormComponent = () => {
   const auth = useAuth();
-  console.log(auth);
-
   const [formData, setFormData] = useState({
     userId: auth.user.id,
     name: auth.user.name,
@@ -18,11 +16,12 @@ const FormComponent = () => {
     caste: "",
     subCaste: "",
     motherTongue: "",
+    eatingHabits:"",
   });
 
   const navigate = useNavigate();
   const religions = ["Hindu", "Muslim", "Christian", "Sikh", "Others"];
-  const motherTongues = ["Telugu", "Hindi", "Tamil", "Kannada", "Malayalam", "Others"];
+  const motherTongues = ["Angika", "Arunachali", "Assamese", "Awadhi", "Bengali", "Bhojpuri", "Brij", "Bihari", "Badaga", "Chatisgarhi", "Dogri", "English", "French", "Garhwali", "Garo", "Gujarati", "Haryanvi", "Himachali/Pahari", "Hindi", "Kanauji", "Kannada", "Kashmiri", "Khandesi", "Khasi", "Konkani", "Koshali", "Kumaoni", "Kutchi", "Lepcha", "Ladacki", "Magahi", "Maithili", "Malayalam", "Manipuri", "Marathi", "Marwari", "Miji", "Mizo", "Monpa", "Nicobarese", "Nepali", "Oriya", "Punjabi", "Rajasthani", "Sanskrit", "Santhali", "Sindhi", "Sourashtra", "Tamil", "Telugu", "Tripuri", "Tulu", "Urdu", "Bagri Rajasthani", "Dhundhari/Jaipuri", "Gujari/Gojari", "Harauti", "Lambadi", "Malvi", "Mewari", "Mewati/Ahirwati", "Nimadi", "Shekhawati", "Wagdi"];
   const genders = ["Male", "Female", "Other"];
 
   const calculateAge = (dob) => {
@@ -37,6 +36,13 @@ const FormComponent = () => {
     return age;
   };
 
+  const handleDropdownChange = (field) => (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: event.target.value, // Correctly updates the selected value
+    }));
+  };
+  const eating= ["Vegetarian", "Non Vegetarian"];
   const handleChange = (e) => {
     const { name, value } = e.target;
     
@@ -148,6 +154,26 @@ const FormComponent = () => {
             ))}
           </Select>
         </FormControl>
+
+        {/* <InputLabel>Eating Habits</InputLabel> */}
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <Select
+                    displayEmpty
+                    value={formData.eatingHabits}
+                    onChange={handleDropdownChange("eatingHabits")}
+                    renderValue={(selected) => 
+                      selected ? selected : <em>Eating Habits</em>
+                    }
+                  >
+                    <MenuItem value="" disabled>Eating Habits</MenuItem>
+                    {eating.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+        
 
         <Button
           type="submit"

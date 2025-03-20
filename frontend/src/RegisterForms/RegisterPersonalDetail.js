@@ -16,13 +16,13 @@ const AboutForm = () => {
     anyDisability: "None",
   });
   const navigate=useNavigate();
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   
-
+  
   const handleSubmit = async(e) => {
     e.preventDefault();
     const res= await axios.post('http://localhost:5000/FamilyDetails',formData);
@@ -104,6 +104,7 @@ const AboutForm = () => {
             <MenuItem value="" disabled>Select Family Type</MenuItem>
             <MenuItem value="Joint">Joint</MenuItem>
             <MenuItem value="Nuclear">Nuclear</MenuItem>
+            <MenuItem value="Extended">Extended</MenuItem>
           </Select>
         </FormControl>
 

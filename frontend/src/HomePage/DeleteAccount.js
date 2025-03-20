@@ -25,8 +25,10 @@ const DeleteAccount = () => {
     );
       console.log(res.data);
       // Clear user data and navigate to register page
-      localStorage.removeItem("token");
+      
       navigate("/register");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
 
       console.log("Account deleted successfully");
     } catch (error) {

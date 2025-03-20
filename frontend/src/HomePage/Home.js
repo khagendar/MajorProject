@@ -127,7 +127,9 @@ const handleUpgrade=()=>{
                 { text: "Edit Profile", path: "/MyProfile" },
                 { text: "Edit Preferences", path: "/preferences" },
                 { text: "Verify Your Profile", path: "/verify" },
+                {text: "Connections", path:"/Connections"},
                 { text: "Settings", path: "/settings" },
+                
               ].map((item, index) => (
                 <ListItem key={index} button onClick={() => navigate(item.path)} sx={{cursor:"pointer"}}>
                   <ListItemText primary={item.text} />
@@ -169,7 +171,9 @@ const handleUpgrade=()=>{
                         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                           {match.name}
                         </Typography>
-                        <Typography variant="body2">{match.age}, {match.height}</Typography>
+                        <Typography variant="body2"><strong>Age: </strong>{match.age}yrs</Typography>
+                        <Typography variant="body2"><strong>Height:</strong> {match.familyDetails.height.feet }ft {match.familyDetails.height.inches }inch</Typography>
+          
                       </CardContent>
                     </Card>
                   </Grid>

@@ -37,7 +37,7 @@ class ProfileDetailsController {
         try {
           const { userId } = req.params;
           const { familyDetails, motherTongue } = req.body;
-        console.log(familyDetails);
+        // console.log(familyDetails);
           if (!userId) {
             return res.status(400).json({ message: "User ID is required" });
           }

@@ -10,7 +10,7 @@ const personSchema = new mongoose.Schema({
   caste: { type: String, required: true },
   subCaste: { type: String },
   motherTongue: { type: String },
-
+  eatingHabits:{type:String},
   // ✅ Profile Bio & Image Storage
   bio: { type: String, maxlength: 200 }, // Limit bio length to 200 characters
   image: { type: String }, // Store Base64 image string

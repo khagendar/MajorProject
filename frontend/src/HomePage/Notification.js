@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent, Typography, Stack, Box, IconButton } from "@mui/material";
-import { CheckCircle, Cancel } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import Navbar from "./Navbar";
 import { useAuth } from "../routes/AuthContex";
 import socket from "../socket";
-
-const NotificationCard = ({ notification, onAccept, onReject }) => {
+const NotificationCard = ({ notification, onRead, onDelete }) => {
   return (
     <Card
       sx={{
@@ -15,18 +14,15 @@ const NotificationCard = ({ notification, onAccept, onReject }) => {
         boxShadow: 3,
         mb: 2,
         bgcolor: notification.isRead ? "white" : "#f0f8ff",
+        cursor: "pointer",
       }}
+      onClick={() => onRead(notification._id)}
     >
       <CardContent>
         <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="center">
-          <Typography variant="body1" sx={{ flexGrow: 1 }}>
-            {notification.senderName} has sent you a request.
-          </Typography>
-          <IconButton color="primary" onClick={() => onAccept(notification._id)}>
-            <CheckCircle />
-          </IconButton>
-          <IconButton color="secondary" onClick={() => onReject(notification._id)}>
-            <Cancel />
+          <Typography variant="body1">{notification.senderName} has sent you a request.</Typography>
+          <IconButton color="error" onClick={(e) => { e.stopPropagation();  onDelete(notification?._id, notification?.sender?._id);; }}>
+            <Delete />
           </IconButton>
         </Stack>
       </CardContent>
@@ -36,7 +32,7 @@ const NotificationCard = ({ notification, onAccept, onReject }) => {
 
 const NotificationList = () => {
   const auth = useAuth();
-  const userId = auth?.user?.id; 
+  const userId = auth?.user?.id;
   const [notifications, setNotifications] = useState([]);
 
   // Function to fetch notifications
@@ -67,7 +63,7 @@ const NotificationList = () => {
     };
   }, [userId]);
 
-  const handleAccept = async (notificationId) => {
+  const handleReadNotification = async (notificationId) => {
     try {
       await axios.put(`http://localhost:5000/${notificationId}/read`);
       setNotifications((prevNotifications) =>
@@ -76,16 +72,23 @@ const NotificationList = () => {
         )
       );
     } catch (error) {
-      console.error("Error marking as read:", error);
+      console.error("Error marking notification as read:", error);
     }
   };
 
-  const handleReject = async (notificationId) => {
+  const handleDeleteNotification = async (notificationId, receiverId) => {
+    console.log(receiverId);
     try {
-      await axios.delete(`http://localhost:5000/${notificationId}`);
+      await axios.delete(`http://localhost:5000/notification/${notificationId}`);
       setNotifications((prevNotifications) =>
         prevNotifications.filter((n) => n._id !== notificationId)
       );
+      const response=await axios.delete("http://localhost:5000/connections/remove", {
+        data: { 
+          sender: auth?.user?.id, 
+          receiver: receiverId,
+        }})
+        console.log(response.data);
     } catch (error) {
       console.error("Error deleting notification:", error);
     }
@@ -95,7 +98,7 @@ const NotificationList = () => {
     if (auth?.user?.id) {
       // Emit addUser event when the user connects
       socket.emit("addUser", auth.user.id);
-      
+
       // Cleanup: Remove user when disconnecting
       return () => {
         socket.emit("removeUser", auth.user.id);
@@ -127,8 +130,8 @@ const NotificationList = () => {
           <NotificationCard
             key={notification._id}
             notification={notification}
-            onAccept={handleAccept}
-            onReject={handleReject}
+            onRead={handleReadNotification}
+            onDelete={handleDeleteNotification}
           />
         ))}
       </Box>

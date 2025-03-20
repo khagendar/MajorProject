@@ -4,8 +4,10 @@ import { useAuth } from "../routes/AuthContex"; // Import useAuth
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useEffect } from "react";
 const Register = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+
   const [error, setError] = useState("");
   const { signup } = useAuth(); // Get signup function from context
   const navigate = useNavigate();
@@ -15,6 +17,12 @@ const Register = () => {
     setError(""); // Clear error on input change
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  
+
+useEffect(() => {
+  setFormData({ name: "", email: "", password: "" });
+}, []);
 
   const validateName = (name) => {
     return /^[A-Za-z]+\s[A-Za-z]+$/.test(name); // Ensures only one space between first and last name
@@ -60,17 +68,19 @@ const Register = () => {
               value={formData.name} 
               required
             />
-            <TextField 
-              label="Email" 
-              name="email" 
-              variant="outlined" 
-              fullWidth 
-              sx={{ mb: 2 }} 
-              onChange={handleChange} 
-              value={formData.email} 
-              required
-            />
-             <TextField 
+          <TextField 
+            label="Email" 
+            name="email" 
+            variant="outlined" 
+            fullWidth 
+            sx={{ mb: 2 }} 
+            onChange={handleChange} 
+            value={formData.email} 
+            required
+            autoComplete="off"
+          />
+
+          <TextField 
             label="Password" 
             name="password" 
             type={showPassword ? "text" : "password"} 
@@ -80,16 +90,18 @@ const Register = () => {
             onChange={handleChange} 
             value={formData.password} 
             required
+            autoComplete="new-password"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    {showPassword ?<Visibility />:<VisibilityOff />}
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
+
             
             {/* Error message area */}
             <Typography 

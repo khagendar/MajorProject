@@ -33,91 +33,98 @@ class UserController {
 
     async Register(req, res) {
         try {
-            const { name, email, password } = req.body;
-
+            const { name, email, password, role } = req.body; // Accepting role (optional)
+    
             if (!name || !email || !password) {
                 return res.status(400).json({ error: "All fields are required" });
             }
-
+    
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 return res.status(400).json({ error: "Invalid email format" });
             }
-
+    
             const existingUser = await User.findOne({ email });
             if (existingUser) {
                 return res.status(400).json({ error: "Email already in use" });
             }
-
-            // ✅ Fix: Use "this.generateAccId()"
-            const accId = await this.generateAccId();
-             console.log(accId);
+    
+            // ✅ Generate Unique Account ID
+            const accId = await this.generateAccId();  
+            console.log(accId);
+    
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-
+    
             const newUser = new User({
                 name,
                 email,
                 password: hashedPassword,
-                accId
+                accId,
+                role: role || "user"  // Default role is 'user' unless specified
             });
-
+    
             await newUser.save();
-
+    
             const tokenPayload = {
                 userId: newUser._id,
-                email: newUser.email
+                email: newUser.email,
+                role: newUser.role
             };
-
+    
             const token = jwt.sign(tokenPayload, process.env.JSON_WEB_SIGN, { expiresIn: "24h" });
-
+    
             res.json({
                 message: "Registration successful",
                 user: {
                     id: newUser._id,
                     name: newUser.name,
                     email: newUser.email,
-                    accId: newUser.accId
+                    accId: newUser.accId,
+                    role: newUser.role
                 },
                 token
             });
+    
         } catch (err) {
             console.error("Error in Register:", err);
             res.status(500).json({ error: "Internal server error" });
         }
     }
     
+    
     async Login(req, res) {
         try {
             const { email, password } = req.body;
-
+    
             // Input validation
             if (!email || !password) {
                 return res.status(400).json({ error: "Email and password are required" });
             }
-
+    
             // Email format validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 return res.status(400).json({ error: "Invalid email format" });
             }
-
+    
             // Find user by email
             const user = await User.findOne({ email });
             if (!user) {
                 return res.status(401).json({ error: "Invalid credentials" });
             }
-
+    
             // Compare passwords
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(401).json({ error: "Invalid credentials" });
             }
-
+    
             // Generate JWT Token
             const tokenPayload = {
                 userId: user._id,
-                email: user.email
+                email: user.email,
+                role: user.role // Include role in token
             };
             
             const token = jwt.sign(
@@ -125,14 +132,15 @@ class UserController {
                 process.env.JSON_WEB_SIGN,
                 { expiresIn: '24h' }
             );
-
-            // Send response
+    
+            // Send response with role included
             res.json({
                 message: "Login successful",
                 user: {
                     id: user._id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    role: user.role // Include role in response
                 },
                 token
             });
@@ -141,6 +149,7 @@ class UserController {
             res.status(500).json({ error: "Internal server error" });
         }
     }
+
 
     async ForgotPassword(req, res) {
         try {

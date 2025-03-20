@@ -6,8 +6,8 @@ const router = express.Router();
 class FormController {
   async normalDetails(req, res)  {
     try {
-        const { userId, name, dob,age,gender, religion, caste, subCaste, motherTongue } = req.body;
-
+        const { userId, name, dob,age,gender, religion, caste, subCaste, motherTongue,eatingHabits } = req.body;
+        // console.log("eatinghabits:" ,eatingHabits)
         if (!userId) {
             return res.status(400).json({ error: "User ID is required" });
         }
@@ -15,7 +15,7 @@ class FormController {
         let person = await Person.findOne({ userId });
 
         if (!person) {
-            person = new Person({ userId, name, dob,age,gender, religion, caste, subCaste, motherTongue });
+            person = new Person({ userId, name, dob,age,gender, religion, caste, subCaste, motherTongue,eatingHabits});
         } else {
             person.name = name;
             person.dob = dob;
@@ -25,6 +25,7 @@ class FormController {
             person.caste = caste;
             person.subCaste = subCaste;
             person.motherTongue = motherTongue;
+            person.eatingHabits=eatingHabits;
         }
 
         await person.save();
@@ -38,7 +39,7 @@ class FormController {
 async professionalDetails(req, res)  {
   try {
       const { userId, highestEducation, employed, occupation, annualIncome, workLocation, state, country } = req.body;
-console.log(highestEducation);
+// console.log(highestEducation);
       if (!userId) {
           return res.status(400).json({ error: "User ID is required" });
       }
@@ -144,7 +145,7 @@ async ProfileImage(req, res)  {
         if (!person) {
             return res.status(404).json({ error: "User not found" });
         }
-        console.log(mbti);
+        // console.log(mbti);
         // Update the MBTI result
         person.Mbti = {
             res: mbti.res,
@@ -162,11 +163,11 @@ async ProfileImage(req, res)  {
       // Get form data for a specific user
       async getForm (req, res)  {
         try {
-          console.log("get form")
+          // console.log("get form")
           const { userId } = req.params;
-          console.log(userId);
+          // console.log(userId);
           const person = await Person.findOne({ userId });
-          console.log(person);
+          // console.log(person);
           if (!person) {
             return res.status(404).json({ message: "No data found for this user" });
           }
@@ -177,6 +178,16 @@ async ProfileImage(req, res)  {
           res.status(500).json({ error: "Internal Server Error" });
         }
       
+      }
+
+      async AllProfiles(req, res) {
+        try {
+          const profiles = await Person.find().populate("userId", "name email"); // Populate user details
+          res.status(200).json(profiles);
+        } catch (error) {
+          console.error("Error fetching profiles:", error);
+          res.status(500).json({ error: "Internal Server Error" });
+        }
       }
 }
 

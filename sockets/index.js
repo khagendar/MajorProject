@@ -192,7 +192,7 @@ io.emit("postDeleted",selectedPostId);
  }))
 
  socket.on("sendRequest", ({ receiverId }) => { // Destructure receiverId properly
-    // console.log("Received request for:", receiverId);
+    console.log("Received request for:", receiverId);
     // console.log("Current Users List:", users);
 
     const receiver = getUser(receiverId); // Check if receiver exists in memory
