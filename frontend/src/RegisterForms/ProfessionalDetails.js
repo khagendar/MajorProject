@@ -26,7 +26,74 @@ const ProfessionalDetailsForm = () => {
     state: "",
     country: "",
   });
-const navigate=useNavigate();
+  const education=["Primary School (1st - 5th grade)",
+      "Middle School (6th - 8th grade)",
+      "High School (9th - 10th grade)",
+      "Higher Secondary - Science (Physics, Chemistry, Mathematics, Biology)",
+      "Higher Secondary - Commerce (Accountancy, Economics, Business Studies)",
+      "Higher Secondary - Arts / Humanities (History, Political Science, Sociology)",
+      "Higher Secondary - Vocational (Hotel Management, IT, Automobile)",
+      "Diploma in Engineering (Polytechnic)",
+      "Diploma in Nursing",
+      "Diploma in Education (D.Ed.)",
+      "Diploma in Hotel Management",
+      "Diploma in Computer Applications (DCA)",
+      "Diploma in Pharmacy (D.Pharm)",
+      "ITI (Industrial Training Institute)",
+      "Vocational Training Certificates",
+      "Bachelor of Arts (BA)",
+      "Bachelor of Social Work (BSW)",
+      "Bachelor of Science (BSc)",
+      "Bachelor of Computer Applications (BCA)",
+      "Bachelor of Commerce (BCom)",
+      "Bachelor of Business Administration (BBA)",
+      "Bachelor of Engineering (BE)",
+      "Bachelor of Technology (BTech)",
+      "Bachelor of Medicine & Bachelor of Surgery (MBBS)",
+      "Bachelor of Dental Surgery (BDS)",
+      "Bachelor of Homeopathic Medicine and Surgery (BHMS)",
+      "Bachelor of Ayurvedic Medicine and Surgery (BAMS)",
+      "Bachelor of Pharmacy (B.Pharm)",
+      "Bachelor of Laws (LLB)",
+      "Bachelor of Fine Arts (BFA)",
+      "Bachelor of Journalism & Mass Communication (BJMC)",
+      "Master of Arts (MA)",
+      "Master of Social Work (MSW)",
+      "Master of Science (MSc)",
+      "Master of Computer Applications (MCA)",
+      "Master of Commerce (MCom)",
+      "Master of Business Administration (MBA)",
+      "Master of Engineering (ME)",
+      "Master of Technology (MTech)",
+      "Doctor of Medicine (MD)",
+      "Master of Surgery (MS)",
+      "Master of Pharmacy (MPharm)",
+      "Master of Laws (LLM)",
+      "Master of Fine Arts (MFA)",
+      "Master of Journalism & Mass Communication (MJMC)",
+      "Doctor of Philosophy (PhD)",
+      "Doctor of Science (DSc)",
+      "Doctor of Literature (DLitt)",
+      "Doctor of Medicine (DM)",
+      "Master of Chirurgiae (MCh)",
+      "Doctor of Law (LLD)",
+      "Chartered Accountant (CA)",
+      "Company Secretary (CS)",
+      "Cost and Management Accountant (CMA)",
+      "Certified Financial Planner (CFP)"]
+  const salary=["Less than Rs.50 thousand", "Rs.50 thousand", "Rs.1 Lakh", "Rs.2 Lakhs", "Rs.3 Lakhs", "Rs.4 Lakhs", "Rs.5 Lakhs", "Rs.6 Lakhs", "Rs.7 Lakhs", "Rs.8 Lakhs", "Rs.9 Lakhs", "Rs.10 Lakhs", "Rs.12 Lakhs", "Rs.14 Lakhs", "Rs.16 Lakhs", "Rs.18 Lakhs", "Rs.20 Lakhs", "Rs.25 Lakhs", "Rs.30 Lakhs", "Rs.35 Lakhs", "Rs.40 Lakhs", "Rs.45 Lakhs", "Rs.50 Lakhs", "Rs.60 Lakhs", "Rs.70 Lakhs", "Rs.80 Lakhs", "Rs.90 Lakhs", "Rs.1 Crore", "Rs.1 Crore & Above"]
+  const location= [
+    "Any",
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", 
+    "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", 
+    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", 
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", 
+    "Uttar Pradesh", "Uttarakhand", "West Bengal", 
+    "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep", "Delhi", "Puducherry", "Jammu and Kashmir", "Ladakh"
+  ]
+  const navigate=useNavigate();
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -86,10 +153,11 @@ const navigate=useNavigate();
             displayEmpty
         >
             <MenuItem value="" disabled>Select Highest Education</MenuItem>
-            <MenuItem value="B.Tech">B.Tech</MenuItem>
-            <MenuItem value="M.Tech">M.Tech</MenuItem>
-            <MenuItem value="MBA">MBA</MenuItem>
-            <MenuItem value="Others">Others</MenuItem>
+            {
+              education.map((option) => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))
+            }
         </Select>
         </FormControl>
 
@@ -131,10 +199,11 @@ const navigate=useNavigate();
             displayEmpty
         >
             <MenuItem value="" disabled>Select Annual Income</MenuItem>
-            <MenuItem value="3 - 5 Lakhs">3 - 5 Lakhs</MenuItem>
-            <MenuItem value="6 - 7 Lakhs">6 - 7 Lakhs</MenuItem>
-            <MenuItem value="8 - 10 Lakhs">8 - 10 Lakhs</MenuItem>
-            <MenuItem value="10+ Lakhs">10+ Lakhs</MenuItem>
+            {
+              salary.map((option) => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))
+            }
         </Select>
         </FormControl>
 
@@ -149,13 +218,21 @@ const navigate=useNavigate();
         />
 
         {/* State */}
-        <TextField
-          fullWidth
-          label="State"
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-        />
+        <FormControl fullWidth>
+        <Select
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            displayEmpty
+        >
+            <MenuItem value="" disabled>State</MenuItem>
+            {
+              location.map((option) => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))
+            }
+        </Select>
+        </FormControl>
 
         {/* City */}
         <TextField

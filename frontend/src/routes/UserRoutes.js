@@ -1,16 +1,19 @@
-import React from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
-import { useAuth } from './AuthContex'; // Adjust the path based on your structure
+import React from "react";
+import { Outlet, Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContex"; // Adjust path if needed
 
 const UserRoutes = () => {
-    const { token } = useAuth(); // Assuming this returns true/false based on auth state
+    const { token, user } = useAuth();
 
-    // If the user is authenticated, redirect them to the home page or desired route
-    if (token) {
-        return <Navigate to="/home" replace={true} />;
+    if (!token) {
+        return <Navigate to="/register" replace={true} />;
     }
 
-    return <Outlet />; // Render child routes if not authenticated
+    if (user?.role === "admin") {
+        return <Navigate to="/AdminHome" replace={true} />; // Redirect admins
+    }
+
+    return <Outlet />; // Render user routes if a regular user
 };
 
 export default UserRoutes;

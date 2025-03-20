@@ -29,7 +29,7 @@ const questions = [
 
 const MBTITest = () => {
   const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState();
   const auth=useAuth();
   const navigate=useNavigate();
 
@@ -71,7 +71,7 @@ const MBTITest = () => {
       return arr;
     }, []);
     console.log(mbtiPercentages); // This will print an array like [a, b, a, b, a, b, a, b]
-    console.log(result);
+    // console.log(result);
     try {
       const userId = auth?.user?.id; // Replace with actual user ID (from context or auth)
       await axios.post(`http://localhost:5000/Mbti-Result`, {
@@ -82,7 +82,7 @@ const MBTITest = () => {
         },
       });
 
-      navigate('/Home');
+      navigate('/preferences');
       
     } catch (error) {
       console.error("Error updating MBTI data:", error);

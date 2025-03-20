@@ -8,7 +8,7 @@ class MatchesData {
     async getMatches(req, res) {
         try {
             const { userId } = req.params;
-            console.log("🔹 Received userId:", userId);
+            // console.log("🔹 Received userId:", userId);
 
             // Validate if userId is a valid ObjectId
             if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -28,7 +28,7 @@ class MatchesData {
 
             // Determine the opposite gender
             const oppositeGender = userProfile.gender.toLowerCase() === "male" ? "Female" : "Male"; // Case-sensitive
-            console.log("🔹 Searching for opposite gender:", oppositeGender);
+            // console.log("🔹 Searching for opposite gender:", oppositeGender);
 
             // Fetch profiles of the opposite gender
             const matches = await Person.find({ gender: oppositeGender });

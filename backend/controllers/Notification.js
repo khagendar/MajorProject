@@ -48,14 +48,41 @@ class Notification {
         }
       }
 
-      async DeleteNotification (req, res)  {
+      async  DeleteNotification(req, res) {
         try {
-          const { notificationId } = req.params;
-          await Notf.findByIdAndDelete(notificationId);
-          res.json({ message: "Notification deleted successfully" });
+          const { notificationId } = req.params; // Ensure the correct key is being used
+      
+          // Validate notificationId before querying
+          if (!mongoose.Types.ObjectId.isValid(notificationId)) {
+            return res.status(400).json({ message: "Invalid notification ID" });
+          }
+          
+        
+          // Find and delete the notification
+          const deletedNotification = await Notf.findByIdAndDelete(notificationId);
+      
+          if (!deletedNotification) {
+            return res.status(404).json({ message: "Notification not found" });
+          }
+      
+          res.status(200).json({ message: "Notification deleted successfully" });
         } catch (error) {
           console.error("Error deleting notification:", error);
-          res.status(500).json({ error: "Failed to delete notification" });
+          res.status(500).json({ message: "Server error", error: error.message });
+        }
+      }
+
+      async NotificationCount(req, res)  {
+        try {
+          const { receiverId } = req.params;
+          // console.log(req.params);
+          // Count notifications where isRead is false for the given receiver
+          const count = await Notf.countDocuments({ receiver: receiverId, isRead: false });
+          
+          res.status(200).json({ count });
+        } catch (error) {
+          console.error("Error fetching unread notifications count:", error);
+          res.status(500).json({ message: "Internal server error" });
         }
       }
 }
