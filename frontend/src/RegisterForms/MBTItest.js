@@ -92,7 +92,7 @@ const MBTITest = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: "#f3b6a2", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <Box sx={{ backgroundColor: "#C03C65", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Paper sx={{ padding: 4, width: 500, borderRadius: 2, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",mt: 4 }}>
         <Typography variant="h6" sx={{ textAlign: "center", fontWeight: "bold", mb: 2 }}>MBTI Test</Typography>
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
@@ -105,7 +105,7 @@ const MBTITest = () => {
               </RadioGroup>
             </FormControl>
           ))}
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Submit</Button>
+          <Button type="submit" variant="contained" color="error" fullWidth sx={{ mt: 2 }}>Submit</Button>
         </form>
       </Paper>
     </Box>

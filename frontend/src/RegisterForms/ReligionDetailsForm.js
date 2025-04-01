@@ -64,11 +64,12 @@ const FormComponent = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgb(243, 182, 162)", // Apply background color to full screen
+        backgroundColor: "#C03C65", // Apply background color to full screen
         minHeight: "100vh", // Ensure it covers the full viewport height
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        
       }}
     >
       <Box
@@ -83,6 +84,8 @@ const FormComponent = () => {
           backgroundColor: "#fff",
           borderRadius: 2,
           boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          marginTop:4,
+          marginBottom:2
         }}
       >
         <Typography variant="h6" sx={{ textAlign: "center", fontWeight: "bold", mb: 2 }}>
@@ -179,7 +182,7 @@ const FormComponent = () => {
           type="submit"
           variant="contained"
           color="primary"
-          sx={{ fontSize: "16px", padding: "10px", borderRadius: "20px", backgroundColor: "#ff6f00", "&:hover": { backgroundColor: "#e65100" } }}
+          sx={{ fontSize: "16px", padding: "10px", borderRadius: "20px", backgroundColor: "red", "&:hover": { backgroundColor: "#e65100" } }}
         >
           Continue
         </Button>

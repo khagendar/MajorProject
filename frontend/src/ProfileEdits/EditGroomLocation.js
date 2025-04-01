@@ -15,7 +15,7 @@ const EditGroomLocation = ({ user, setUser }) => {
   useEffect(() => {
     setCountry(user?.professionalDetails?.country || "");
     setState(user?.professionalDetails?.state || "");
-    setCity(user?.professionalDetails?.city || "");
+    setCity(user?.professionalDetails?.workLocation || "");
     setCitizenship(user?.professionalDetails?.country || "");
   }, [user]);
 
@@ -25,13 +25,18 @@ const EditGroomLocation = ({ user, setUser }) => {
   const handleSave = async () => {
     try {
       await axios.put(`http://localhost:5000/update-groom-location/${auth.user.id}`, { 
-        country, state, city, citizenship 
+        country, state, city
       });
 
-      setUser({ 
-        ...user, 
-        groomLocation: { country, state, city, citizenship } 
-      });
+      setUser((prevUser) => ({
+        ...prevUser,
+        professionalDetails: {
+          ...prevUser.professionalDetails,
+          country,
+          state,
+          workLocation: city
+        }
+      }))
 
       handleClose();
     } catch (error) {
@@ -62,7 +67,7 @@ const EditGroomLocation = ({ user, setUser }) => {
           <TextField fullWidth label="Country" value={country} onChange={(e) => setCountry(e.target.value)} sx={{ mt: 2 }} />
           <TextField fullWidth label="State" value={state} onChange={(e) => setState(e.target.value)} sx={{ mt: 2 }} />
           <TextField fullWidth label="City" value={city} onChange={(e) => setCity(e.target.value)} sx={{ mt: 2 }} />
-          <TextField fullWidth label="Citizenship" value={citizenship} onChange={(e) => setCitizenship(e.target.value)} sx={{ mt: 2 }} />
+          {/* <TextField fullWidth label="Citizenship" value={citizenship} onChange={(e) => setCitizenship(e.target.value)} sx={{ mt: 2 }} /> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">Cancel</Button>

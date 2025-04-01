@@ -34,7 +34,7 @@ const AboutForm = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgb(243, 182, 162)",
+        backgroundColor: "#C03C65",
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
@@ -137,7 +137,7 @@ const AboutForm = () => {
                     fontSize: "16px",
                     padding: "10px",
                     borderRadius: "20px",
-                    backgroundColor: "#ff6f00",
+                    backgroundColor: "red",
                     "&:hover": { backgroundColor: "#e65100" },
                   }}
                 >

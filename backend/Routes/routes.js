@@ -15,6 +15,7 @@ const Connections=require('../controllers/Connection');
 const Connected =require("../controllers/ConnectedAccounts");
 const VerifyProfile=require("../controllers/ProfileVerifyController");
 const preferenceCont = require('../controllers/preferencecont');
+const subscriptioncontroller = require('../controllers/subscriptioncontroller');
 const multer=require('multer');
 const storage = multer.memoryStorage(); // Store image in memory as a Buffer
 const upload = multer({ storage: storage });
@@ -35,7 +36,10 @@ router.post("/Mbti-Result",FormController.mbtiResult);
 router.get("/AllProfiles",FormController.AllProfiles);
 router.post("/Forgot-password",LoginController.ForgotPassword);
 router.put("/Update-password",LoginController.Changepassword);
-
+router.put("/update-photo/:userId",ProfileDetailsController.UpdatePhoto);
+router.put("/update-religion/:userId",ProfileDetailsController.UpdateReligion);
+router.put("/update-groom-location/:userId",ProfileDetailsController.UpdateLocation);
+router.put("/update-professional-info/:userId",ProfileDetailsController.UpdateProfessional);
 //messages
 router.get('/user/:id', userController.getUserById);
 router.post('/conversation',ConversationController.conversation);
@@ -49,8 +53,8 @@ router.delete('/DeleteMessage/:id',MessageController.DeleteMessage);
 router.put('/UpdateConversationDate/:conversationId',ConversationController.updateConversationDate);
 router.put('/reaction/:messageId',MessageController.Reaction);
 router.put('/reply/:messageId',MessageController.Reply);
-router.get('/Search',userController.getAllUsers);
-
+router.get('/Search/:currentUserId',userController.getAllUsers);
+router.put("/update-payment/:id",LoginController.UpdatePaymentVerification);
 router.get('/matches/:userId',MatchesController.getMatches);
 router.post("/shortlist",ShortListController.shortlist);
 router.delete("/shortlist/:userId/:profileId",ShortListController.deleteShortList);
@@ -82,11 +86,15 @@ router.delete('/disconnect/:userId1/:userId2',Connected.Disconnect);
 router.post("/verify-profile",VerifyProfile.VerifyProfile);
 router.get("/verifications",VerifyProfile.Verification);
 router.put("/verify-profile/:id",VerifyProfile.verificationStatus);
-
+router.get("/verifyProfile/:userId",VerifyProfile.VerificationById);
 //preference
 router.post("/setPreference",preferenceCont.setPreference)
 router.get("/getPreference",preferenceCont.getPreference)
 router.get("/matchPreference",preferenceCont.matchPreference)
+
+
+router.post("/subscribeuser",subscriptioncontroller.subscribeUser)
+router.post("/getsubscriber",subscriptioncontroller.getsubscriber)
 
 module.exports = router;
 

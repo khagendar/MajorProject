@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   accId: { type: String, required: true, unique: true },
   role: { type: String, enum: ["user", "admin"], default: "user" }, // Default role as 'user'
-  membership:{type:String,default:null}
+  membership:{type:String,default:"free"},
+  verification:{type:String,default:"pending"}
 });
 
 const User = mongoose.model("User", userSchema);

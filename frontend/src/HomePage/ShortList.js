@@ -106,7 +106,7 @@ const MatrimonialProfiles = () => {
                 <Typography variant="subtitle2" color="textSecondary">Matrimonial ID: {userData[profile?.profileId?.userId]?.accId || "N/A"}</Typography>
                 <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>{profile.profileId.name}</Typography>
                 <Typography variant="body2" color="textSecondary">{profile.profileId.age} yrs • {profile.profileId.familyDetails.height.feet}ft {profile.profileId.familyDetails.height.feet}inch</Typography>
-                <Typography variant="body2" color="textSecondary">{profile.profileId.gender}: {profile.profileId.languages}</Typography>
+                <Typography variant="body2" color="textSecondary">{profile.profileId.gender}, {profile.profileId.motherTongue}</Typography>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", mt: 1 }}>
                   <LocationOnIcon color="error" fontSize="small" />
                   <Typography variant="body2" color="textSecondary">{profile.profileId.professionalDetails.state ||"Unknow"}</Typography>

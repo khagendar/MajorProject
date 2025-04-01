@@ -71,7 +71,7 @@ const ProfilePage = () => {
 
         
           <Dialog open={openPhotoModal} onClose={() => setOpenPhotoModal(false)}>
-            <EditPhoto onClose={() => setOpenPhotoModal(false)} />
+            <EditPhoto onClose={() => setOpenPhotoModal(false)} setUser={setUser} user={user} />
           </Dialog>
 
           {/* Profile Edit Sections */}

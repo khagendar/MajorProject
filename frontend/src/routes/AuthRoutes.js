@@ -6,7 +6,7 @@ const AuthRoutes = () => {
     const { token, user } = useAuth();
 
     if (token) {
-        return <Navigate to={user?.role === "admin" ? "/AdminHome" : "/home"} replace />;
+        return <Navigate to={user?.role === "admin" ? "/AdminHome" : "/Home"} replace />;
     }
 
     return <Outlet />;

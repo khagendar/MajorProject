@@ -116,7 +116,7 @@ const ProfessionalDetailsForm = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgb(243, 182, 162)", // Background color covering full screen
+        backgroundColor: "#C03C65", // Background color covering full screen
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
@@ -252,7 +252,7 @@ const ProfessionalDetailsForm = () => {
             fontSize: "16px",
             padding: "10px",
             borderRadius: "20px",
-            backgroundColor: "#ff6f00",
+            backgroundColor: "red",
             "&:hover": { backgroundColor: "#e65100" },
           }}
         >

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const AadhaarVerification = require("../Model/ProfileVerify");
-
+const User= require("../Model/loginschema");
 class Profileverify {
 
     // Route to verify Aadhaar profile
@@ -29,6 +29,8 @@ class Profileverify {
         });
   
         await newVerification.save();
+
+        
         res.status(201).json({ message: "Aadhaar verification submitted successfully", data: newVerification });
       } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
@@ -47,6 +49,8 @@ class Profileverify {
 
       // Route to update verification status
       async verificationStatus(req, res) {
+        const { id } = req.params;
+         console.log("verify",req.params);
         try {
           const { status } = req.body; // Get status from request body
       
@@ -54,13 +58,20 @@ class Profileverify {
           if (!["pending", "verified", "rejected"].includes(status)) {
             return res.status(400).json({ message: "Invalid status" });
           }
-      
+          
           // Update status in database
           const updatedVerification = await AadhaarVerification.findByIdAndUpdate(
-            req.params.id,
+            id,
             { status },
             { new: true }
           );
+        // console.log(updatedVerification);
+          const updatedUser = await User.findByIdAndUpdate(
+            updatedVerification.userId,
+            { verification: status },
+            { new: true }
+        );
+        
       
           if (!updatedVerification) {
             return res.status(404).json({ message: "Verification request not found" });
@@ -70,6 +81,27 @@ class Profileverify {
         } catch (error) {
           res.status(500).json({ message: "Server error", error: error.message });
         }
+      }
+
+      async VerificationById(req, res)  {
+        const {userId}=req.params
+        // console.log( "verification",userId);
+        try {
+          if (!userId) {
+              return res.status(400).json({ message: "User ID is required" });
+          }
+  
+          const user = await AadhaarVerification.findOne({ userId });
+          if (!user) {
+              console.log("User not found:", userId); // Debugging
+              // return res.status(404).json({ message: "User not found" });
+          }
+  
+          res.status(200).json(user);
+      } catch (error) {
+          console.error("Error fetching user:", error);
+          res.status(500).json({ message: "Server Error", error });
+      }
       }
       
 }

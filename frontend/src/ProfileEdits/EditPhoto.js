@@ -10,6 +10,7 @@ const ProfilePhotoUpload = ({ user, setUser }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [preview, setPreview] = useState(user?.image || "");
 
+  // Handle file selection and preview
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -18,32 +19,41 @@ const ProfilePhotoUpload = ({ user, setUser }) => {
     }
   };
 
+  // Handle image upload
   const handleUpload = async () => {
     if (!selectedImage) return;
-
-    const formData = new FormData();
-    formData.append("image", selectedImage);
-
-    try {
-      const { data } = await axios.post(
-        `http://localhost:5000/upload-profile-photo/${auth.user.id}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      setUser((prevUser) => ({ ...prevUser, image: data.imageUrl }));
-      setOpen(false);
-    } catch (error) {
-      console.error("Error uploading photo:", error);
-    }
+  
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Image = reader.result;
+  
+      try {
+        const response = await axios.put(
+          `http://localhost:5000/update-photo/${auth?.user?.id}`, // Make sure this is correct!
+          { image: base64Image },
+          { headers: { "Content-Type": "application/json" } }
+        );
+  
+        if (response?.data?.success) {
+          setUser((prevUser) => ({ ...prevUser, image: response?.data?.image }));
+          setOpen(false);
+        }
+      } catch (error) {
+        console.error("Error uploading photo:", error);
+      }
+    };
+  
+    reader.readAsDataURL(selectedImage);
   };
+  
 
   return (
     <Box textAlign="center">
-        <Box display={"grid"} justifyContent={"center"}>
-      <Avatar src={preview} sx={{ width: 80, height: 80,mt:2,ml:5.8 }} />
-      <Button variant="contained" startIcon={<PhotoCamera />} sx={{ mt: 2 }} onClick={() => setOpen(true)}>
-        Add/Edit Photo
-      </Button>
+      <Box display={"grid"} justifyContent={"center"}>
+        <Avatar src={preview} sx={{ width: 80, height: 80, mt: 2, ml: 5.8 }} />
+        <Button variant="contained" startIcon={<PhotoCamera />} sx={{ mt: 2 }} onClick={() => setOpen(true)}>
+          Add/Edit Photo
+        </Button>
       </Box>
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">

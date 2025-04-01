@@ -122,7 +122,7 @@ class UserController {
             }
 
             const form=await Form.findOne({userId:user._id})
-            const gender=form.gender?form.gender:"";
+            // const gender=form.gender?form.gender:"";
     
             // Generate JWT Token
             const tokenPayload = {
@@ -144,7 +144,7 @@ class UserController {
                     id: user._id,
                     name: user.name,
                     email: user.email,
-                    gender: gender,
+                    // gender: gender,
                     role: user.role // Include role in response
                 },
                 token
@@ -236,6 +236,31 @@ class UserController {
             res.status(500).json({ error: "Server error" });
         }
     }
+
+
+    async UpdatePaymentVerification (req, res) {
+        try {
+          const { id } = req.params;
+           console.log(req.params)
+          // Find user by ID and update membership and verification
+          const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { 
+              membership: "premium", // Change this based on your membership plans
+            },
+            { new: true } // Returns the updated user document
+          );
+      
+          if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+          }
+      
+          res.status(200).json({ message: "Payment updated successfully", user: updatedUser });
+        } catch (error) {
+          console.error("Error updating payment:", error);
+          res.status(500).json({ message: "Internal server error" });
+        }
+      }
     
 }
 

@@ -1,5 +1,6 @@
 const UserModel = require("../Model/loginschema"); // Ensure the path to your model is correct
-
+const ConnectedModel = require("../Model/ConnectedSchema"); 
+const Person = require("../Model/Form");
 class UserController {
   // Get User by ID
   async getUserById(req, res) {
@@ -16,18 +17,43 @@ class UserController {
     }
   }
   // Assuming you have an Express app and a UserModel for MongoDB
-async getAllUsers(req, res) {
+  async getAllUsers (req, res) {
   try {
-    // Fetch all users from the database
-    const users = await UserModel.find(); // Use find() to get all users
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: "No users found" });
+    const { currentUserId } = req.params; // Get current user ID from request params
+
+    if (!currentUserId) {
+      return res.status(400).json({ message: "Current user ID is required" });
     }
-    res.status(200).json(users);
+
+    // Find all connections where the current user is either user1 or user2
+    const connections = await ConnectedModel.find({
+      $or: [{ user1: currentUserId }, { user2: currentUserId }],
+    });
+
+    if (!connections || connections.length === 0) {
+      return res.status(404).json({ message: "No connected users found" });
+    }
+
+    // Extract the connected user IDs (excluding the current user)
+    const connectedUserIds = connections.map((connection) =>
+      connection.user1.toString() === currentUserId
+        ? connection.user2.toString()
+        : connection.user1.toString()
+    );
+
+    // Fetch full profile details of connected users
+    const connectedUsersProfiles = await Person.find({
+      userId: { $in: connectedUserIds },
+    });
+
+    res.status(200).json(connectedUsersProfiles);
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving users", error });
+    console.error("Error retrieving connected users' profiles:", error);
+    res.status(500).json({ message: "Error retrieving connected users", error });
   }
 }
+  
+  
  async Location (req, res){
   const { id } = req.params;
   const { longitude, latitude } = req.body;

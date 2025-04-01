@@ -12,7 +12,16 @@ const GroomBridePreferences = () => {
     userId:auth?.user?.id,
     gender: auth?.user?.gender==="Male" ? "Bride":"Groom",
     ageRange: [],
-    height: [],
+    height: [
+      {
+        feet:5,
+        inches:0,
+      },
+      {
+        feet:6,
+        inches:0
+      }
+    ],
     maritalStatus: [],
     motherTongue: [],
     physicalStatus: [],

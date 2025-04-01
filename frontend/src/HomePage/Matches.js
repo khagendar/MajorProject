@@ -110,6 +110,7 @@ const MatrimonialProfiles = () => {
     const userId = userData[profile?.userId]?._id;
     navigate(`/Profile/${userId}`, { state: { profile } });
   };
+  console.log(selectedProfiles);
 
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
@@ -142,7 +143,7 @@ const MatrimonialProfiles = () => {
                   {profile.age} yrs • {profile?.familyDetails?.height?.feet}ft {profile?.familyDetails?.height?.inches} inch
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {profile.gender}: {profile.languages}
+                  {profile.gender}, {profile.motherTongue}
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", mt: 1 }}>
                   <LocationOnIcon color="error" fontSize="small" />

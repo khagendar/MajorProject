@@ -152,6 +152,7 @@ class MatchesData {
                     height: match.person.familyDetails.height,
                     familyType: match.person.familyDetails.familyType
                 },
+                gender:match.person.gender,
                 mbtiType: match.person.Mbti?.res,
                 compatibilityScore: Math.round(match.score),
             }));

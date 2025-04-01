@@ -109,19 +109,19 @@ useEffect(() => {
       p={1}
     >
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} alignContent={'center'}>
           <Badge
             
           >
             <Avatar src={userSearchData.image} sx={{ cursor: 'pointer' }} />
           </Badge>
-          <Stack spacing={0.3}>
+          <Stack spacing={0.3} paddingTop={1} >
             <Typography variant="subtitle2">
               {userDetails.length > 0 ? userDetails[0].name : 'Khagendar'}
             </Typography>
-            <Typography variant="caption">
+            {/* <Typography variant="caption">
               {userData?.userProfile?.username || 'What are you doing?'}
-            </Typography>
+            </Typography> */}
           </Stack>
         </Stack>
         <Stack spacing={1} alignItems="center" mr={1}>

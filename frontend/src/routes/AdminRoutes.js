@@ -10,7 +10,7 @@ const AdminRoutes = () => {
     }
 
     if (user?.role !== "admin") {
-        return <Navigate to="/home" replace={true} />; // Redirect non-admins to home
+        return <Navigate to="/Home" replace={true} />; // Redirect non-admins to home
     }
 
     return <Outlet />; // Render admin routes if the user is an admin

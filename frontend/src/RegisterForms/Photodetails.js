@@ -77,7 +77,7 @@ const ProfileForm = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgb(243, 182, 162)",
+        backgroundColor: "#C03C65",
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
@@ -108,7 +108,7 @@ const ProfileForm = () => {
             position: "absolute",
             top: 10,
             right: 10,
-            color: "#ff6f00",
+            color: "red",
             fontWeight: "bold",
             textTransform: "none",
           }}
@@ -117,9 +117,9 @@ const ProfileForm = () => {
         </Button>
 
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-          <Avatar src={image} sx={{ width: 120, height: 120, border: "2px solid #ff6f00" }} />
+          <Avatar src={image} sx={{ width: 120, height: 120, border: "2px solid red" }} />
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button variant="contained" component="label" sx={{ backgroundColor: "#ff6f00", "&:hover": { backgroundColor: "#e65100" } }}>
+            <Button variant="contained" component="label" sx={{ backgroundColor: "red", "&:hover": { backgroundColor: "#e65100" } }}>
               Upload Photo
               <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
             </Button>
@@ -150,7 +150,7 @@ const ProfileForm = () => {
             fontSize: "16px",
             padding: "10px",
             borderRadius: "20px",
-            backgroundColor: "#ff6f00",
+            backgroundColor: "red",
             "&:hover": { backgroundColor: "#e65100" },
           }}
         >

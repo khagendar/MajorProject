@@ -256,7 +256,7 @@ const PreferencePre = () => {
   
   
     return (
-        <Box sx={{ backgroundColor: "#f3b6a2", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ backgroundColor: "#C03C65", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Paper sx={{ padding: 4, width: 500, borderRadius: 2, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",mt: 4 }}>
         <Typography variant="h6" sx={{ textAlign: "center", fontWeight: "bold", mb: 2 }}>Groom/Bride Preferences</Typography>
         
@@ -683,7 +683,7 @@ const PreferencePre = () => {
     </Select>
   </FormControl>
 
-  <Button variant="contained" color="primary" type="submit">
+  <Button variant="contained" color="error" type="submit">
     Submit Preferences
   </Button>
 </Box>

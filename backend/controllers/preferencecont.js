@@ -72,7 +72,7 @@ class PreferenceController {
     
             // Fetch user preferences
             const preferences = await PreferenceModel.findOne({ userId: objectId });
-    
+            console.log(preferences)
             if (!preferences) {
                 return res.status(404).json({ message: "Preferences not found" });
             }

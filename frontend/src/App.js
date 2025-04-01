@@ -27,7 +27,7 @@ import UserRoutes from "./routes/UserRoutes";
   import MBTITest from "./RegisterForms/MBTItest";
   import ForgotPassword from "./Login/Forgotpassword";
   import GenerateChatApp from "./chatApplication/GenerateChatApp";
-  import Payment from "./Payment/payment";
+  // import Payment from "./Payment/payment";
   import ProfileSearch from "./HomePage/ProfileSearchMatches";
   import Connections from "./HomePage/Connections";
   import Verify from "./HomePage/verify";
@@ -35,6 +35,7 @@ import UserRoutes from "./routes/UserRoutes";
 import Landing1 from "./landing1";
 import PreferencePre from "./RegisterForms/Preference_pre";
 import PaymentGateway from "./Payment/paymentgateway";
+import Payment from "./Payment/payment";
   function AppContent() {
     return (
       <AuthProvider>
@@ -44,7 +45,7 @@ import PaymentGateway from "./Payment/paymentgateway";
             {/* Redirect to Register by default */}
             {/* <Route path="/" element={<Navigate to="/register" />} />
              */}
-             <Route path="/" element={<Landing1/>} />
+             <Route path="/" element={<Navigate to="/register"/>} />
 
             {/* Public Routes */}
             {/* <Route element={<AuthRoutes />}> */}
@@ -87,7 +88,7 @@ import PaymentGateway from "./Payment/paymentgateway";
             {/* Add Protected Routes Here */}
 
              {/* Default Redirect for Undefined Routes */}
-             <Route path="*" element={<Navigate to="/login" replace />} />
+             {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
           </Routes>
         </div>
       </AuthProvider>

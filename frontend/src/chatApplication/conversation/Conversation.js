@@ -638,7 +638,7 @@ console.log(userData);
   
               {/* Input section */}
               
-                  <Box sx={{ height: 70, width: '100%' }} p={1}>
+                  <Box sx={{ height: 90, width: '100%' }} p={1}>
                       <Stack direction="row" alignItems="center" spacing={3}>
                           <Box width="100%">
                           <ChatInput

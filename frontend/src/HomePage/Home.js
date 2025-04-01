@@ -20,6 +20,7 @@ import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../routes/AuthContex";
 import axios from "axios";
+import { Columns, Stack } from "phosphor-react";
 // const matches = [
 //   { name: "M Bala Shivangini", age: "21 Yrs", height: "5'0", img: "https://assets.entrepreneur.com/content/3x2/2000/20150820205507-single-man-outdoors-happy-bliss.jpeg" },
 //   { name: "Vasanta", age: "20 Yrs", height: "5'1", img: "https://beyondages.com/wp-content/uploads/2020/06/AdobeStock_71430219.jpeg" },
@@ -37,6 +38,8 @@ const MatrimonyDashboard = () => {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]); // Store dynamic matches
   const [useDetails,setUseDetails]=useState('');
+  const [verificationStatus,setVerificationStatus]=useState('pending');
+  const [membership,setMembership]=useState("Free");
   console.log(auth);
 
   useEffect(() => {
@@ -58,8 +61,35 @@ const MatrimonyDashboard = () => {
         }
       };
   
+      const fetchSubscriptionStatus = async () => {
+        try {
+          // console.log(userId);
+          const response = await axios.post("http://localhost:5000/getsubscriber", { userId : auth?.user?.id });
+          console.log(response.data);
+          if (response.status === 201) {
+            setMembership("premium");
+          }
+          const res=await axios.put(`http://localhost:5000/update-payment/${auth?.user?.id}`);
+           console.log(res.data);
+        } catch (error) {
+          console.error("Error fetching subscriber", error);
+        } 
+      };
+      fetchSubscriptionStatus();
       fetchUserData();
     }, []);
+
+    
+
+    useEffect(()=>{
+      const fetchVerificationDetails=async()=>{
+       const res=await axios.get(`http://localhost:5000/user/${auth?.user?.id}`);
+       console.log(res.data);
+       setVerificationStatus(res?.data?.verification);
+      }
+      fetchVerificationDetails();
+    },[auth?.user?.id]);
+
     const fetchMatches = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/matches/${auth?.user?.id}`);
@@ -95,6 +125,7 @@ const handleUpgrade=()=>{
 }
   const displayedMatches = matches.slice(0, 6);
    console.log(displayedMatches);
+   console.log(user)
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />
@@ -115,11 +146,12 @@ const handleUpgrade=()=>{
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 {user?.name}
               </Typography>
+
               <Typography variant="body2" sx={{ color: "gray" }}>{useDetails?.accId}</Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                Membership: <b>Free</b>
+               <Typography variant="body2" sx={{ mt: 1 }}>
+                Membership: <b>{membership}</b>
               </Typography>
-              <Button variant="contained" sx={{ mt: 1, bgcolor: "#ff9800" }} onClick={handleUpgrade}>
+              <Button variant="contained" sx={{ mt: 1, bgcolor: "#C03C65" }} onClick={handleUpgrade}>
                 Upgrade
               </Button>
               <List sx={{ mt: 2 }}>
@@ -142,14 +174,30 @@ const handleUpgrade=()=>{
 
           {/* Middle Section - Matches */}
           <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          {verificationStatus === "pending" ? (
+            <Box display="flex" flexDirection="column" alignItems="center">
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Your profile is pending verification!
               </Typography>
-              <Button variant="outlined" sx={{ mt: 1 }}>
+              <Button variant="outlined" sx={{ mt: 1 }} onClick={() => navigate("/verify")}>
                 Verify Profile
               </Button>
-            </Paper>
+            </Box>
+          ) : verificationStatus === "verified" ? (
+            <Typography variant="h6" sx={{ color: "green", fontWeight: "bold", textAlign: "center" }}>
+              ✅ Your profile is verified!
+            </Typography>
+          ) : (
+            <Typography variant="h6" sx={{ color: "red", fontWeight: "bold", textAlign: "center" }}>
+              ❌ Your profile is rejected!
+            </Typography>
+          )}
+        </Box>
+
+        </Typography>
+
 
             {/* Matches Section */}
             <Paper elevation={3} sx={{ padding: 2, marginTop: 3 }}>
@@ -171,8 +219,8 @@ const handleUpgrade=()=>{
                         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                           {match.name}
                         </Typography>
-                        <Typography variant="body2"><strong>Age: </strong>{match.age}yrs</Typography>
-                        <Typography variant="body2"><strong>Height:</strong> {match.familyDetails.height.feet }ft {match.familyDetails.height.inches }inch</Typography>
+                        <Typography variant="body2">{match.age}yrs,    {match.familyDetails.height.feet }ft {match.familyDetails.height.inches }inch</Typography>
+                       
           
                       </CardContent>
                     </Card>
@@ -201,7 +249,7 @@ const handleUpgrade=()=>{
                 <Typography variant="body2" sx={{ color: "gray", mb: 2 }}>
                   Get an exclusive ₹200 off on 3-month Gold
                 </Typography>
-                <Button variant="contained" sx={{ bgcolor: "#ff9800" }}>
+                <Button variant="contained" sx={{ bgcolor: "#C03C65" }}>
                   Upgrade Now
                 </Button>
               </CardContent>
