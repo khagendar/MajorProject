@@ -10,34 +10,46 @@ import axios from "axios";
 export default function GenerateChatApp() {
   const auth = useAuth();
   const [online, setOnline] = useState([]);
-  const [membership, setMembership] = useState(null); // Store membership status
+  const [membership, setMembership] = useState("free");
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       if (auth?.user?.id) {
         try {
-          const res = await axios.get(`http://localhost:5000/user/${auth?.user?.id}`);
-          console.log("User Data:", res.data);
-          setMembership(res.data.membership); // Store membership status
+          // Fetch user data and subscription status in one call
+          const userResponse = await axios.get(`http://localhost:5000/user/${auth?.user?.id}`);
+          console.log("User Data:", userResponse.data);
+          setMembership(userResponse.data.membership);
+
+          // Check subscription status
+          const subResponse = await axios.post("http://localhost:5000/getsubscriber", { userId: auth?.user?.id });
+          if (subResponse.status === 201) {
+            setMembership("premium");
+          } else {
+            setMembership("free");
+          }
+
+          // Set up socket connection
+          socket.emit("addUser", auth?.user?.id);
+          socket.on("getUsers", (data) => {
+            setOnline(data);
+            console.log("Online Users:", data);
+          });
+
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching user data or subscription status:", error);
         }
+      } else {
+        console.log("No user found or user ID is undefined");
       }
     };
-    fetchUserData();
-  }, [auth?.user?.id]);
 
-  useEffect(() => {
-    if (auth?.user?.id) {
-      console.log("User ID:", auth?.user?.id); // Debugging log
-      socket.emit("addUser", auth?.user?.id);
-      socket.on("getUsers", (data) => {
-        setOnline(data);
-        console.log("Online Users:", data);
-      });
-    } else {
-      console.log("No user found or user ID is undefined"); // Debugging log
-    }
+    fetchData();
+
+    // Cleanup socket listeners
+    return () => {
+      socket.off("getUsers");
+    };
   }, [auth?.user?.id]);
 
   return (
@@ -47,7 +59,6 @@ export default function GenerateChatApp() {
         <Chatlist />
         <Chat online={online} />
 
-        {/* Lock the chat if membership is 'free' */}
         {membership === "free" && (
           <Box
             sx={{
@@ -56,7 +67,7 @@ export default function GenerateChatApp() {
               left: 0,
               width: "100%",
               height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.81)", // Medium dark overlay // Completely dark overlay
+              backgroundColor: "rgba(0, 0, 0, 0.81)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

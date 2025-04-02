@@ -38,7 +38,7 @@ class FormController {
 
 async professionalDetails(req, res)  {
   try {
-      const { userId, highestEducation, employed, occupation, annualIncome, workLocation, state, country } = req.body;
+      const { userId, highestEducation, employed, occupation, annualIncome, workLocation, state, country ,phonenumber} = req.body;
 // console.log(highestEducation);
       if (!userId) {
           return res.status(400).json({ error: "User ID is required" });
@@ -49,7 +49,7 @@ async professionalDetails(req, res)  {
       if (!person) {
           return res.status(404).json({ error: "User not found" });
       }
-
+      person.phonenumber=phonenumber;
       person.professionalDetails = {
           highestEducation: highestEducation || person.professionalDetails.highestEducation,
           employed: employed || person.professionalDetails.employed,

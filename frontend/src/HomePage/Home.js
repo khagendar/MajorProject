@@ -75,8 +75,10 @@ const MatrimonyDashboard = () => {
           console.error("Error fetching subscriber", error);
         } 
       };
+      if(auth?.user?.id){
       fetchSubscriptionStatus();
       fetchUserData();
+      }
     }, []);
 
     
@@ -113,7 +115,7 @@ const MatrimonyDashboard = () => {
       };
     
       fetchDetails();
-    }, [auth?.user?._id]);
+    }, [auth?.user?.id]);
   
   useEffect(() => {
     if (showAll) {

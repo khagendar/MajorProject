@@ -14,6 +14,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../routes/AuthContex";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const ProfessionalDetailsForm = () => {
   const auth =useAuth();
   const [formData, setFormData] = useState({
@@ -25,6 +28,7 @@ const ProfessionalDetailsForm = () => {
     workLocation: "",
     state: "",
     country: "",
+    phonenumber:"",
   });
   const education=["Primary School (1st - 5th grade)",
       "Middle School (6th - 8th grade)",
@@ -83,7 +87,6 @@ const ProfessionalDetailsForm = () => {
       "Certified Financial Planner (CFP)"]
   const salary=["Less than Rs.50 thousand", "Rs.50 thousand", "Rs.1 Lakh", "Rs.2 Lakhs", "Rs.3 Lakhs", "Rs.4 Lakhs", "Rs.5 Lakhs", "Rs.6 Lakhs", "Rs.7 Lakhs", "Rs.8 Lakhs", "Rs.9 Lakhs", "Rs.10 Lakhs", "Rs.12 Lakhs", "Rs.14 Lakhs", "Rs.16 Lakhs", "Rs.18 Lakhs", "Rs.20 Lakhs", "Rs.25 Lakhs", "Rs.30 Lakhs", "Rs.35 Lakhs", "Rs.40 Lakhs", "Rs.45 Lakhs", "Rs.50 Lakhs", "Rs.60 Lakhs", "Rs.70 Lakhs", "Rs.80 Lakhs", "Rs.90 Lakhs", "Rs.1 Crore", "Rs.1 Crore & Above"]
   const location= [
-    "Any",
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
     "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", 
     "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", 
@@ -107,6 +110,13 @@ const ProfessionalDetailsForm = () => {
 
   const handleSubmit = async(event) => {
     event.preventDefault();
+    if (formData.phonenumber.length !== 10) {
+      toast.error("Phone number must be exactly 10 digits!", {
+        position: "top-center",
+        autoClose: 3000, // Closes after 3 seconds
+      });
+      return;
+    }
     const res= await axios.post('http://localhost:5000/update-professional',formData);
     console.log(res.data);
     navigate('/register/PhotoDetails');
@@ -242,7 +252,14 @@ const ProfessionalDetailsForm = () => {
           value={formData.city}
           onChange={handleChange}
         />
-
+        { /* Phone number */ }
+        <TextField
+          fullWidth
+          label="phonenumber"
+          name="phonenumber"
+          value={formData.phonenumber}
+          onChange={handleChange}
+        />
         {/* Submit Button */}
         <Button
           type="submit"

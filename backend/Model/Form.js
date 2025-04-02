@@ -14,7 +14,7 @@ const personSchema = new mongoose.Schema({
   // ✅ Profile Bio & Image Storage
   bio: { type: String, maxlength: 200 }, // Limit bio length to 200 characters
   image: { type: String }, // Store Base64 image string
-   
+  phonenumber:{type:String},
 
   professionalDetails: {
     highestEducation: { type: String },

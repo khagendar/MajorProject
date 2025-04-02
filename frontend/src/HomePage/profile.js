@@ -39,6 +39,7 @@ const ProfileCard = () => {
         const response = await axios.get(`http://localhost:5000/get-form/${userId}`);
         if (response.data) {
           setUseDetails(response.data);
+          console.log(response.data)
         }
         else {
           console.error("Data is empty");
@@ -51,8 +52,7 @@ const ProfileCard = () => {
       try {
           const cur = auth?.user?.id;
           const view = userId;
-          console.log(cur,view)
-  
+
           const response = await axios.get("http://localhost:5000/matchPreference", {
               params: { cur, view }
           });
@@ -218,14 +218,30 @@ const ProfileCard = () => {
               {useDetails?.data?.professionalDetails.state}
             </Typography>
 
-            <Box sx={{ mt: 2 }}>
-              <IconButton color="primary">
-                <CallIcon />
-              </IconButton>
-              <IconButton color="success">
-                <WhatsAppIcon />
-              </IconButton>
-            </Box>
+            <Box
+  sx={{
+    mt: 2,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center", // Aligns items vertically in the center
+    gap: 1, // Adds spacing between the icon and text
+  }}
+>
+  <IconButton color="primary">
+    <CallIcon />
+  </IconButton>
+  {ConnectedUsers.some(user => user._id === userId) ? (
+            <Typography variant="body1">
+            +91 {useDetails?.data?.phonenumber}
+          </Typography>
+           ) : (
+            <Typography variant="body1">
+            +91 {useDetails?.data?.phonenumber.slice(0, 4)}********
+            </Typography> 
+            )} 
+</Box>
+
+
           </CardContent>
         </Card>
 

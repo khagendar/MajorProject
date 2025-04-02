@@ -480,22 +480,29 @@ const MatrimonyUI = () => {
     
       {/* Login Modal */}
       <Modal 
-        open={openLoginModal} 
-        onClose={handleCloseLoginModal}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1 }}
-          >
-            <Login/>
-          </motion.div>
-      </Modal>
+  open={openLoginModal} 
+  onClose={handleCloseLoginModal}
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}
+  BackdropProps={{
+    style: {
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)', // For Safari
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    }
+  }}
+>
+  <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.1 }}
+    >
+      <Login onCloseModal={handleCloseLoginModal} />
+    </motion.div>
+</Modal>
 
       {/* Enhanced Footer Section */}
       <Box sx={{ 

@@ -4,9 +4,10 @@ const Person = require("../Model/Form");
 const PreferenceModel = require("../Model/preference");
 
 const router = express.Router();
-
+ 
 class PreferenceController {
-    constructor() {}
+    constructor() {
+    }
 
     async setPreference(req, res) {
         try {
@@ -87,7 +88,6 @@ class PreferenceController {
             return res.status(500).json({ message: "Server error", error: error.message });
         }
     }
-
     async matchPreference(req, res) {
         try {
             console.log("Query params:", req.query);
@@ -124,8 +124,10 @@ class PreferenceController {
             // Define `matches` logic here if needed
             const preference={}
             const {ageRange,gender,religion,caste,subcaste,motherTongue,eatingHabits,education,employed,occupation,annualIncome,location,height,maritalStatus,familyStatus,familyType,familyValues,physicalStatus }=preferencesbef;
-            
-            console.log("height",preferencesbef);
+            console.log(preferencesbef)
+            console.log("height",preferencesbef.height[0]);
+            console.log("height",JSON.stringify(height[0]))
+
             const userdets={
                 age:userdetails.age,
                 gender:userdetails.gender,
@@ -187,7 +189,9 @@ class PreferenceController {
             }
             console.log("Gender")
             console.log(matches)
-            if((userdets.gender==="Male"&&matches[1].value==="Groom")||(userdets.gender==="Female"&&matches[1].value==="Bride")||matches[1].value.includes("Any")){
+            console.log("user",userdets.gender)
+            console.log("gen",gender)
+            if((userdets.gender==="Male"&&matches[1].value[0]==="Groom")||(userdets.gender==="Female"&&matches[1].value[0]==="Bride")||matches[1].value.includes("Any")){
                 console.log("Gender")
                 matches[1].match="green";
                 console.log(matches)
@@ -212,6 +216,14 @@ class PreferenceController {
                 }
                 count++;
             });
+            const income=["Less than Rs.50 thousand", "Rs.50 thousand", "Rs.1 Lakh", "Rs.2 Lakhs", "Rs.3 Lakhs", "Rs.4 Lakhs", "Rs.5 Lakhs", "Rs.6 Lakhs", "Rs.7 Lakhs", "Rs.8 Lakhs", "Rs.9 Lakhs", "Rs.10 Lakhs", "Rs.12 Lakhs", "Rs.14 Lakhs", "Rs.16 Lakhs", "Rs.18 Lakhs", "Rs.20 Lakhs", "Rs.25 Lakhs", "Rs.30 Lakhs", "Rs.35 Lakhs", "Rs.40 Lakhs", "Rs.45 Lakhs", "Rs.50 Lakhs", "Rs.60 Lakhs", "Rs.70 Lakhs", "Rs.80 Lakhs", "Rs.90 Lakhs", "Rs.1 Crore", "Rs.1 Crore & Above"]; 
+            // console.log(annualIncome)
+            const income1 = income.indexOf(annualIncome[0]);
+            const income2 = income.indexOf(userdets.annualIncome);
+            console.log("income",income1,income2)
+            if(income1 <= income2){
+                matches[10].match="green";
+            }
                 
             return res.status(200).json({
                 message: "Preferences retrieved successfully",
