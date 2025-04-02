@@ -54,7 +54,7 @@ class MatchesData {
         totalScore += this.calculatePersonalityCompatibility(person1, person2);
         // console.log("4",totalScore)
 
-        return Math.min(Math.max(totalScore, 0), 100);
+        return (Math.min(Math.max(totalScore, 0), 125))/1.25;
     }
 
     checkCoreCriteria(person1, person2) {
